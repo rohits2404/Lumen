@@ -1,20 +1,25 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { useState } from "react";
+import * as React from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ArrowRightIcon, ArrowUpRightIcon, LogOutIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import {
     Sheet,
-    SheetTrigger,
+    SheetClose,
     SheetContent,
     SheetTitle,
-    SheetClose,
-} from "../ui/sheet";
-import { Button } from "../ui/button";
-import Link from "next/link";
+    SheetTrigger,
+} from "@/components/ui/sheet";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Logo } from "@/components/shared/logo";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { initialsOf, type MenuUser } from "@/lib/user";
+import { authClient } from "@/lib/auth-client";
 import { marketingNav, siteConfig } from "@/lib/config/site";
-import { Logo } from "../shared/logo";
-import { ArrowRightIcon, ArrowUpRightIcon } from "lucide-react";
-import { ThemeToggle } from "../theme-toggle";
+import { cn } from "@/lib/utils";
 
 function MenuBars({ crossed }: { crossed?: boolean }) {
     return (
@@ -38,9 +43,17 @@ function MenuBars({ crossed }: { crossed?: boolean }) {
     );
 }
 
-function MobileNav() {
-    const [open, setOpen] = useState(false);
+function MobileNav({ user }: { user: MenuUser | null }) {
+    const router = useRouter();
+    const [open, setOpen] = React.useState(false);
     const close = () => setOpen(false);
+
+    async function signOut() {
+        close();
+        await authClient.signOut();
+        router.push("/");
+        router.refresh();
+    }
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
@@ -80,12 +93,11 @@ function MobileNav() {
                 </div>
 
                 <div className="relative flex min-h-full flex-col">
-                    {/* mirrors the header bar, down to the 70px height and the border */}
                     <div className="flex h-17.5 shrink-0 items-center justify-between border-b px-6">
                         <Link
                             href="/"
                             onClick={close}
-                            aria-label={`${siteConfig.name} Home`}
+                            aria-label={`${siteConfig.name} home`}
                         >
                             <Logo markClassName="size-8" />
                         </Link>
@@ -102,6 +114,7 @@ function MobileNav() {
                             <MenuBars crossed />
                         </SheetClose>
                     </div>
+
                     <nav className="flex flex-1 flex-col justify-center px-6 py-4">
                         {marketingNav.map((item, index) => (
                             <Link
@@ -130,26 +143,77 @@ function MobileNav() {
                         }}
                         className="flex animate-nav-item flex-col gap-2.5 px-6 pt-2 pb-[max(2rem,env(safe-area-inset-bottom))]"
                     >
-                        <>
-                            <Button
-                                nativeButton={false}
-                                className="h-12 gap-2 px-5! font-semibold"
-                                render={
-                                    <Link href="/register" onClick={close} />
-                                }
-                            >
-                                Get Started
-                                <ArrowRightIcon data-icon="inline-end" />
-                            </Button>
-                            <Button
-                                variant="outline"
-                                nativeButton={false}
-                                className="h-12 bg-card font-semibold"
-                                render={<Link href="/login" onClick={close} />}
-                            >
-                                Log In
-                            </Button>
-                        </>
+                        {user ? (
+                            <>
+                                <div className="mb-1 flex items-center gap-3 rounded-xl border bg-card px-4 py-3">
+                                    <Avatar className="size-9">
+                                        <AvatarImage
+                                            src={user.image ?? undefined}
+                                            alt=""
+                                            referrerPolicy="no-referrer"
+                                        />
+                                        <AvatarFallback className="bg-hover text-xs font-semibold text-foreground">
+                                            {initialsOf(user.name, user.email)}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <span className="flex min-w-0 flex-col">
+                                        <span className="truncate text-sm font-bold">
+                                            {user.name}
+                                        </span>
+                                        <span className="truncate text-sm text-muted-foreground">
+                                            {user.email}
+                                        </span>
+                                    </span>
+                                </div>
+                                <Button
+                                    nativeButton={false}
+                                    className="h-12 gap-2 px-5! font-semibold"
+                                    render={
+                                        <Link
+                                            href="/dashboard"
+                                            onClick={close}
+                                        />
+                                    }
+                                >
+                                    Dashboard
+                                    <ArrowRightIcon data-icon="inline-end" />
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    onClick={signOut}
+                                    className="h-12 gap-2 bg-card font-semibold"
+                                >
+                                    <LogOutIcon />
+                                    Log Out
+                                </Button>
+                            </>
+                        ) : (
+                            <>
+                                <Button
+                                    nativeButton={false}
+                                    className="h-12 gap-2 px-5! font-semibold"
+                                    render={
+                                        <Link
+                                            href="/register"
+                                            onClick={close}
+                                        />
+                                    }
+                                >
+                                    Get Started
+                                    <ArrowRightIcon data-icon="inline-end" />
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    nativeButton={false}
+                                    className="h-12 bg-card font-semibold"
+                                    render={
+                                        <Link href="/login" onClick={close} />
+                                    }
+                                >
+                                    Log In
+                                </Button>
+                            </>
+                        )}
 
                         <div className="mt-4 flex items-center justify-between rounded-xl border bg-card px-4 py-3 [@media(max-height:680px)]:mt-2">
                             <span className="text-sm text-muted-foreground">

@@ -6,9 +6,12 @@ import { PricingSection } from "@/components/landing/pricing-section";
 import { QuestionsSection } from "@/components/landing/questions-section";
 import { StatsSection } from "@/components/landing/stats-section";
 import { TestimonialsSection } from "@/components/landing/testimonials-section";
+import { getBusinessOffer } from "@/lib/subscription";
 import React from "react";
 
-const Home = () => {
+const Home = async () => {
+    const offer = await getBusinessOffer();
+
     return (
         <main>
             <HeroSection />
@@ -16,7 +19,7 @@ const Home = () => {
             <PlatformSection />
             <CatalogSection />
             <TestimonialsSection />
-            <PricingSection />
+            <PricingSection offer={offer} />
             <QuestionsSection />
             <CtaSection />
         </main>

@@ -15,6 +15,8 @@ import { Card } from "../ui/card";
 import { CheckIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { startBusinessCheckout } from "@/lib/actions/subscriptions";
+import { toast } from "../ui/toast";
 
 const periods: { value: BillingPeriod; label: string }[] = [
     { value: "monthly", label: "Monthly" },
@@ -31,7 +33,16 @@ function PricingSection({
     const [period, setPeriod] = useState<BillingPeriod>("monthly");
     const [pending, startTransition] = useTransition();
 
-    function upgrade() {}
+    function upgrade() {
+        startTransition(async () => {
+            const result = await startBusinessCheckout(period);
+            if (!result.ok) {
+                toast.add({ title: result.message, type: "error" });
+                return;
+            }
+            window.location.href = result.url;
+        });
+    }
 
     return (
         <section className={cn("w-full", className)}>

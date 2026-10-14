@@ -3,10 +3,10 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
 import { CatalogBrowser } from "./catalog-browser";
-import { CatalogCourse } from "@/lib/config/catalog-shape";
+import { getCatalogCourses } from "@/lib/catalog";
 
 async function CatalogSection({ className }: { className?: string }) {
-    const courses: CatalogCourse[] = [];
+    const courses = await getCatalogCourses();
 
     return (
         <section className={cn("w-full", className)}>
