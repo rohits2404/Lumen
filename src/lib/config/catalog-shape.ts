@@ -1,0 +1,20 @@
+export type CatalogCourse = {
+    id: string;
+    slug: string;
+    title: string;
+    instructor: string;
+    instructorSlug: string;
+    instructorId: string;
+    categoryName: string;
+    categorySlug: string;
+    art: string;
+    thumbnailUrl: string | null;
+    level: string;
+    durationHours: number;
+    rating: number;
+    reviews: number;
+    students: number;
+    price: number;
+    listPrice: number;
+    publishedAtMs: number;
+};

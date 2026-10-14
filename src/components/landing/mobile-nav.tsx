@@ -1,0 +1,167 @@
+"use client";
+
+import { cn } from "@/lib/utils";
+import { useState } from "react";
+import {
+    Sheet,
+    SheetTrigger,
+    SheetContent,
+    SheetTitle,
+    SheetClose,
+} from "../ui/sheet";
+import { Button } from "../ui/button";
+import Link from "next/link";
+import { marketingNav, siteConfig } from "@/lib/config/site";
+import { Logo } from "../shared/logo";
+import { ArrowRightIcon, ArrowUpRightIcon } from "lucide-react";
+import { ThemeToggle } from "../theme-toggle";
+
+function MenuBars({ crossed }: { crossed?: boolean }) {
+    return (
+        <span
+            aria-hidden="true"
+            className="flex flex-col items-center justify-center gap-1.25"
+        >
+            <span
+                className={cn(
+                    "h-0.5 w-4.5 origin-center rounded-full bg-current",
+                    crossed && "animate-menu-x-top",
+                )}
+            />
+            <span
+                className={cn(
+                    "h-0.5 w-4.5 origin-center rounded-full bg-current",
+                    crossed && "animate-menu-x-bottom",
+                )}
+            />
+        </span>
+    );
+}
+
+function MobileNav() {
+    const [open, setOpen] = useState(false);
+    const close = () => setOpen(false);
+
+    return (
+        <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger
+                render={
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        aria-label="Open menu"
+                        className="size-9.5 bg-card shadow-sm md:hidden dark:bg-card"
+                    />
+                }
+            >
+                <MenuBars />
+            </SheetTrigger>
+
+            <SheetContent
+                side="top"
+                showCloseButton={false}
+                className={cn(
+                    "gap-0 overflow-y-auto bg-background p-0 shadow-none",
+                    "data-[side=top]:h-dvh data-[side=top]:border-b-0",
+                    "transition-[clip-path,transform] duration-520 ease-(--ease-out-soft)",
+                    "[clip-path:inset(0_0_0_0)]",
+                    "data-starting-style:opacity-100 data-starting-style:[clip-path:inset(0_0_100%_0)]",
+                    "data-ending-style:opacity-100 data-ending-style:[clip-path:inset(0_0_100%_0)]",
+                )}
+            >
+                <SheetTitle className="sr-only">Navigation</SheetTitle>
+
+                <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 overflow-hidden"
+                >
+                    <div className="orb top-[22%] left-[86%] size-105 -translate-x-1/2 -translate-y-1/2 animate-drift-2 bg-accent-1 opacity-(--orb-soft)" />
+                    <div className="orb top-[88%] left-[6%] size-95 -translate-x-1/2 -translate-y-1/2 animate-drift-3 bg-accent-3 opacity-(--ambient)" />
+                </div>
+
+                <div className="relative flex min-h-full flex-col">
+                    {/* mirrors the header bar, down to the 70px height and the border */}
+                    <div className="flex h-17.5 shrink-0 items-center justify-between border-b px-6">
+                        <Link
+                            href="/"
+                            onClick={close}
+                            aria-label={`${siteConfig.name} Home`}
+                        >
+                            <Logo markClassName="size-8" />
+                        </Link>
+                        <SheetClose
+                            render={
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    aria-label="Close menu"
+                                    className="size-9.5 bg-card shadow-sm dark:bg-card"
+                                />
+                            }
+                        >
+                            <MenuBars crossed />
+                        </SheetClose>
+                    </div>
+                    <nav className="flex flex-1 flex-col justify-center px-6 py-4">
+                        {marketingNav.map((item, index) => (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                onClick={close}
+                                style={{
+                                    animationDelay: `${110 + index * 55}ms`,
+                                }}
+                                className="group flex animate-nav-item items-center gap-4 border-b border-border-subtle py-5 last:border-b-0 [@media(max-height:680px)]:py-3.5"
+                            >
+                                <span className="w-5 font-mono text-[11px] text-subtle-foreground tabular-nums">
+                                    {String(index + 1).padStart(2, "0")}
+                                </span>
+                                <span className="text-[26px] font-extrabold tracking-[-0.03em] transition-colors group-active:text-accent-1 [@media(max-height:680px)]:text-[22px]">
+                                    {item.title}
+                                </span>
+                                <ArrowUpRightIcon className="ml-auto size-5 text-subtle-foreground transition-transform group-active:translate-x-0.5 group-active:-translate-y-0.5" />
+                            </Link>
+                        ))}
+                    </nav>
+
+                    <div
+                        style={{
+                            animationDelay: `${110 + marketingNav.length * 55}ms`,
+                        }}
+                        className="flex animate-nav-item flex-col gap-2.5 px-6 pt-2 pb-[max(2rem,env(safe-area-inset-bottom))]"
+                    >
+                        <>
+                            <Button
+                                nativeButton={false}
+                                className="h-12 gap-2 px-5! font-semibold"
+                                render={
+                                    <Link href="/register" onClick={close} />
+                                }
+                            >
+                                Get Started
+                                <ArrowRightIcon data-icon="inline-end" />
+                            </Button>
+                            <Button
+                                variant="outline"
+                                nativeButton={false}
+                                className="h-12 bg-card font-semibold"
+                                render={<Link href="/login" onClick={close} />}
+                            >
+                                Log In
+                            </Button>
+                        </>
+
+                        <div className="mt-4 flex items-center justify-between rounded-xl border bg-card px-4 py-3 [@media(max-height:680px)]:mt-2">
+                            <span className="text-sm text-muted-foreground">
+                                Appearance
+                            </span>
+                            <ThemeToggle />
+                        </div>
+                    </div>
+                </div>
+            </SheetContent>
+        </Sheet>
+    );
+}
+
+export { MobileNav };
