@@ -47,7 +47,7 @@ function LoginForm() {
 
     return (
         <div className="flex flex-col">
-            <h1 className="text-[32px] leading-tight">Welcome back</h1>
+            <h1 className="text-[32px] leading-tight">Welcome Back</h1>
             <p className="mt-2 text-[15px] text-muted-foreground">
                 Sign In To Pick Up Where You Left Off.
             </p>
