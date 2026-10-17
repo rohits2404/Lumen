@@ -20,11 +20,11 @@ import type { AttentionFacts } from "@/lib/admin/overview";
 
 export const adminOverviewCopy = {
     title: "Platform Overview",
-    modeBadge: "Admin mode",
-    attentionHeading: "Needs your attention",
-    topCoursesHeading: "Top courses platform-wide",
-    attentionEmpty: "Nothing is waiting on you right now.",
-    topCoursesEmpty: "No courses are live yet.",
+    modeBadge: "Admin Mode",
+    attentionHeading: "Needs Your Attention",
+    topCoursesHeading: "Top Courses Platform-Wide",
+    attentionEmpty: "Nothing Is Waiting On You Right Now.",
+    topCoursesEmpty: "No Courses Are Live Yet.",
 } as const;
 
 export type PlatformStatKey = "users" | "courses" | "revenue" | "uptime";
